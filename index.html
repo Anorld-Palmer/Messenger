@@ -1,0 +1,1441 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b0d14">
+<title>Messenger</title>
+
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #0b0d14;
+  --panel: #121622;
+  --panel2: #1a2030;
+  --text: #f5f6fc;
+  --muted: #9299ad;
+  --blue: #3985ff;
+  --line: #282e40;
+  --danger: #ff647c;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+}
+button, input, textarea { font: inherit; }
+button { cursor: pointer; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+input, textarea {
+  color: var(--text);
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 13px;
+  outline: none;
+  width: 100%;
+}
+input:focus, textarea:focus { border-color: var(--blue); }
+button:focus-visible, input:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+.hidden { display: none !important; }
+.primary {
+  background: var(--blue);
+  border: 0;
+  color: white;
+  border-radius: 13px;
+  padding: 13px 18px;
+  font-weight: 650;
+}
+.secondary {
+  background: var(--panel2);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 15px;
+}
+.muted { color: var(--muted); }
+.small { font-size: 12px; }
+.error { color: var(--danger); font-size: 13px; }
+.success { color: #5fe0a0; font-size: 13px; }
+
+/* Authentication and profile setup */
+.auth-screen {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.auth-card {
+  width: 100%;
+  max-width: 390px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+.brand {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-bottom: 3px;
+}
+.brand-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  background: var(--blue);
+  border-radius: 14px;
+  margin-right: 9px;
+}
+.auth-card h1 { font-size: 27px; margin: 9px 0 0; }
+.auth-card p { line-height: 1.5; }
+.auth-card label, .profile-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  font-size: 13px;
+  color: #c5cada;
+}
+.auth-actions { display: flex; gap: 9px; }
+.auth-actions button { flex: 1; }
+.auth-foot { font-size: 13px; text-align: center; }
+
+/* Application shell */
+.app {
+  height: 100dvh;
+  max-width: 1500px;
+  margin: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.topbar {
+  height: 36px;
+  flex: 0 0 36px;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+.topbar-icons { display: flex; gap: 7px; align-items: center; }
+.workspace {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 380px minmax(0, 1fr);
+}
+.sidebar {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--line);
+}
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 17px 18px 20px;
+}
+.sidebar-header h1 {
+  font-size: 34px;
+  margin: 0;
+  letter-spacing: -1px;
+}
+.header-actions { display: flex; gap: 9px; }
+.icon-btn {
+  width: 42px;
+  height: 42px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--panel2);
+  color: var(--text);
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+}
+.search-wrap { padding: 0 17px 18px; }
+.search-box {
+  height: 49px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 13px;
+  border-radius: 15px;
+  background: var(--panel2);
+  border: 1px solid transparent;
+}
+.search-box:focus-within { border-color: var(--blue); }
+.search-box input {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  min-width: 0;
+}
+.filters { display: flex; gap: 8px; padding: 0 18px 15px; }
+.filter {
+  padding: 9px 18px;
+  border-radius: 100px;
+  background: var(--panel2);
+  color: #b8bfd1;
+  border: 1px solid var(--line);
+  font-size: 13px;
+  font-weight: 650;
+}
+.filter.active { background: #f5f7ff; color: #286fe8; }
+.chat-list { overflow-y: auto; flex: 1; min-height: 0; padding: 0 14px; }
+.chat-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 82px;
+  padding: 12px 3px;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+}
+.chat-row:hover { background: #151a27; }
+.avatar {
+  width: 51px;
+  height: 51px;
+  flex: 0 0 51px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, #6558df, #3286ff);
+  color: white;
+  font-size: 15px;
+  font-weight: 750;
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.chat-details { min-width: 0; flex: 1; }
+.chat-top, .chat-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.chat-name {
+  font-size: 14px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.chat-time { color: var(--muted); font-size: 10px; white-space: nowrap; }
+.chat-preview {
+  display: block;
+  margin-top: 7px;
+  color: #a5adbf;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.chat-extra { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
+.unread-badge {
+  background: var(--blue);
+  color: white;
+  border-radius: 100px;
+  min-width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  padding: 0 5px;
+  font-size: 10px;
+  font-weight: 750;
+}
+.ticks { font-size: 15px; letter-spacing: -3px; color: #9299ad; margin-right: 3px; }
+.ticks.read { color: #48a1ff; text-shadow: 0 0 7px #3985ffb0; }
+.ticks.sent { color: #9299ad; }
+
+/* Main conversation area */
+.conversation {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+.welcome {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 30px;
+}
+.welcome-inner { max-width: 340px; }
+.welcome-icon {
+  width: 75px;
+  height: 75px;
+  border-radius: 25px;
+  margin: 0 auto 20px;
+  display: grid;
+  place-items: center;
+  background: var(--panel2);
+  color: var(--blue);
+}
+.welcome h2 { font-size: 24px; margin: 0 0 12px; }
+.welcome p { color: var(--muted); line-height: 1.7; font-size: 14px; }
+
+.conversation-header {
+  min-height: 75px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--line);
+}
+.conversation-person { min-width: 0; flex: 1; }
+.conversation-person strong { display: block; font-size: 15px; }
+.conversation-person span { display: block; font-size: 12px; color: var(--muted); margin-top: 5px; }
+.messages {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.message {
+  max-width: min(75%, 470px);
+  align-self: flex-start;
+  background: var(--panel2);
+  padding: 11px 13px 8px;
+  border-radius: 15px 15px 15px 4px;
+  overflow-wrap: anywhere;
+}
+.message.mine {
+  align-self: flex-end;
+  background: #254f91;
+  border-radius: 15px 15px 4px 15px;
+}
+.message-body { white-space: pre-wrap; font-size: 14px; line-height: 1.45; }
+.message-meta {
+  margin-top: 7px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 7px;
+  align-items: center;
+  color: #c1c8d8;
+  font-size: 10px;
+}
+.message-compose {
+  padding: 13px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  align-items: flex-end;
+  gap: 9px;
+}
+.message-compose textarea {
+  resize: none;
+  max-height: 130px;
+  min-height: 46px;
+  flex: 1;
+}
+.send-btn {
+  height: 46px;
+  width: 48px;
+  flex: 0 0 48px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--blue);
+  color: white;
+  font-size: 20px;
+}
+.mobile-back { display: none; }
+
+/* Bottom navigation */
+.bottom-nav {
+  height: 75px;
+  flex: 0 0 75px;
+  padding: 7px 5px max(7px, env(safe-area-inset-bottom));
+  display: flex;
+  justify-content: space-around;
+  background: #11141ff7;
+  border-top: 1px solid var(--line);
+}
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  background: transparent;
+  color: #838ba0;
+  border: 0;
+  font-size: 10px;
+}
+.nav-item svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.nav-item.active { color: var(--blue); }
+
+.toast {
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #252b3a;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 16px;
+  max-width: 90%;
+  font-size: 13px;
+  z-index: 100;
+}
+.mobile-only { display: none; }
+
+@media (max-width: 720px) {
+  .app { height: 100dvh; }
+  .workspace { display: block; position: relative; overflow: hidden; }
+  .sidebar { height: 100%; border-right: 0; }
+  .conversation {
+    position: absolute;
+    inset: 0;
+    background: var(--bg);
+    display: none;
+  }
+  .workspace.chat-open .sidebar { display: none; }
+  .workspace.chat-open .conversation { display: flex; }
+  .mobile-back { display: grid; }
+  .sidebar-header h1 { font-size: 33px; }
+  .chat-list { padding-bottom: 10px; }
+  .message { max-width: 86%; }
+  .app.chat-mode .bottom-nav { display: none; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- Login / registration -->
+<section id="authScreen" class="auth-screen">
+  <form id="authForm" class="auth-card">
+    <div class="brand"><span class="brand-mark">✦</span>Messenger</div>
+    <h1 id="authTitle">Welcome back</h1>
+    <p class="muted" id="authDescription">Sign in to continue to your messages.</p>
+
+    <label>Email
+      <input id="authEmail" type="email" autocomplete="email" required>
+    </label>
+
+    <label>Password
+      <input id="authPassword" type="password" minlength="8"
+             autocomplete="current-password" required>
+    </label>
+
+    <div class="auth-actions">
+      <button class="primary" id="signInBtn" type="submit">Sign in</button>
+      <button class="secondary" id="registerBtn" type="button">Register</button>
+    </div>
+
+    <button id="forgotBtn" class="secondary" type="button">Forgot password?</button>
+    <p id="authMessage" aria-live="polite"></p>
+  </form>
+</section>
+
+<!-- Profile setup -->
+<section id="profileScreen" class="auth-screen hidden">
+  <form id="profileForm" class="auth-card profile-form">
+    <div class="brand"><span class="brand-mark">✦</span>Messenger</div>
+    <h1>Set up your profile</h1>
+    <p class="muted">Choose how other people will see you.</p>
+
+    <label>Display name
+      <input id="displayName" maxlength="60" required>
+    </label>
+
+    <label>Unique username
+      <input id="username" maxlength="24" minlength="3"
+             pattern="[A-Za-z0-9_]+" placeholder="your_username" required>
+    </label>
+
+    <label>Profile photo URL (optional)
+      <input id="avatarUrl" type="url" placeholder="https://...">
+    </label>
+
+    <button class="primary" type="submit">Save profile</button>
+    <p id="profileMessage" aria-live="polite"></p>
+  </form>
+</section>
+
+<!-- Messenger app -->
+<div id="appScreen" class="app hidden">
+
+  <div class="topbar">
+    <span id="deviceTime">9:41</span>
+    <div class="topbar-icons">
+      <svg width="18" height="14" viewBox="0 0 20 16" fill="currentColor">
+        <rect x="1" y="10" width="3" height="5" rx="1"/>
+        <rect x="6" y="7" width="3" height="8" rx="1"/>
+        <rect x="11" y="4" width="3" height="11" rx="1"/>
+        <rect x="16" y="1" width="3" height="14" rx="1"/>
+      </svg>
+      <svg width="22" height="14" viewBox="0 0 24 16" fill="none">
+        <rect x="1" y="2" width="19" height="12" rx="3" stroke="currentColor" stroke-width="1.5"/>
+        <rect x="3.5" y="4.5" width="13" height="7" rx="1.5" fill="currentColor"/>
+        <path d="M22 6v4" stroke="currentColor" stroke-width="2"/>
+      </svg>
+    </div>
+  </div>
+
+  <div id="workspace" class="workspace">
+
+    <aside id="sidebar" class="sidebar">
+      <header class="sidebar-header">
+        <h1 id="pageTitle">Chats</h1>
+        <div class="header-actions">
+          <button id="newChatBtn" class="icon-btn" title="New chat" aria-label="New chat">✎</button>
+          <button id="menuBtn" class="icon-btn" title="More options" aria-label="More options">⋮</button>
+        </div>
+      </header>
+
+      <div id="searchWrap" class="search-wrap">
+        <label class="search-box">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/>
+          </svg>
+          <input id="searchInput" type="search" placeholder="Search conversations" aria-label="Search conversations">
+        </label>
+      </div>
+
+      <div id="filters" class="filters">
+        <button class="filter active" data-filter="all" aria-pressed="true">All</button>
+        <button class="filter" data-filter="unread" aria-pressed="false">Unread</button>
+        <button class="filter" data-filter="groups" aria-pressed="false">Groups</button>
+      </div>
+
+      <div id="chatList" class="chat-list" aria-live="polite"></div>
+    </aside>
+
+    <main id="conversation" class="conversation">
+      <section id="welcome" class="welcome">
+        <div class="welcome-inner">
+          <div class="welcome-icon">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5Z"/>
+            </svg>
+          </div>
+          <h2>Welcome to Messenger</h2>
+          <p>Select a conversation from the left to start chatting with your friends.</p>
+        </div>
+      </section>
+
+      <header id="conversationHeader" class="conversation-header hidden">
+        <button id="backBtn" class="icon-btn mobile-back" aria-label="Back to chats">‹</button>
+        <div id="conversationAvatar" class="avatar">M</div>
+        <div class="conversation-person">
+          <strong id="conversationName"></strong>
+          <span id="conversationStatus">Messenger</span>
+        </div>
+      </header>
+
+      <div id="messages" class="messages hidden"></div>
+
+      <form id="composeForm" class="message-compose hidden">
+        <textarea id="messageInput" rows="1" maxlength="10000"
+                  placeholder="Write a message..." aria-label="Message"></textarea>
+        <button id="sendBtn" class="send-btn" type="submit" aria-label="Send message">➤</button>
+      </form>
+    </main>
+  </div>
+
+  <nav id="bottomNav" class="bottom-nav" aria-label="Main navigation">
+    <button class="nav-item active" data-page="Chats">
+      <svg viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.4 8.4 0 0 1-3.8-.9L3 21l1.9-5.7a8.4 8.4 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.4 8.4 0 0 1 3.8-.9h.5a8.5 8.5 0 0 1 8 8v.5Z"/></svg>
+      <span>Chats</span>
+    </button>
+    <button class="nav-item" data-page="Calls">
+      <svg viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.4 19.4 0 0 1-6-6 19.8 19.8 0 0 1-3.1-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 2 .7 2.9a2 2 0 0 1-.5 2.1L8 8.9a16 16 0 0 0 6 6l1.2-1.3a2 2 0 0 1 2.1-.5c.9.3 1.9.6 2.9.7a2 2 0 0 1 1.8 2.1Z"/></svg>
+      <span>Calls</span>
+    </button>
+    <button class="nav-item" data-page="Stories">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.5"/><circle cx="12" cy="12" r="2"/></svg>
+      <span>Stories</span>
+    </button>
+    <button class="nav-item" data-page="Contacts">
+      <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="4"/><path d="M3 21v-2a6 6 0 0 1 12 0v2M16 4.5a4 4 0 0 1 0 7.5M18 15a5 5 0 0 1 3 4.5V21"/></svg>
+      <span>Contacts</span>
+    </button>
+    <button class="nav-item" data-page="Settings">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1a1.7 1.7 0 0 1-2.4 2.4l-.1-.1a1.7 1.7 0 0 0-2.9 1.2v.2a1.7 1.7 0 0 1-3.4 0v-.2a1.7 1.7 0 0 0-2.9-1.2l-.1.1a1.7 1.7 0 0 1-2.4-2.4l.1-.1a1.7 1.7 0 0 0-1.2-2.9H4a1.7 1.7 0 0 1 0-3.4h.2a1.7 1.7 0 0 0 1.2-2.9l-.1-.1a1.7 1.7 0 0 1 2.4-2.4l.1.1a1.7 1.7 0 0 0 2.9-1.2V2a1.7 1.7 0 0 1 3.4 0v.2a1.7 1.7 0 0 0 2.9 1.2l.1-.1a1.7 1.7 0 0 1 2.4 2.4l-.1.1a1.7 1.7 0 0 0 1.2 2.9h.2a1.7 1.7 0 0 1 0 3.4h-.2a1.7 1.7 0 0 0-1.2 2.9Z"/></svg>
+      <span>Settings</span>
+    </button>
+  </nav>
+</div>
+
+<div id="toast" class="toast hidden" role="status"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+"use strict";
+
+/* Replace these with your existing Supabase project values.
+   Use the publishable/anon key only, never a service-role key. */
+const SUPABASE_URL = "YOUR_SUPABASE_URL";
+const SUPABASE_KEY = "YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY";
+
+const $ = id => document.getElementById(id);
+
+let db = null;
+let currentUser = null;
+let myProfile = null;
+let activeChat = null;
+let activeFilter = "all";
+let searchMode = false;
+let currentPage = "Chats";
+let messageChannel = null;
+let presenceChannel = null;
+let profileChannel = null;
+let messageCache = [];
+let profilesCache = new Map();
+let onlineUsers = new Set();
+let lastSeenByChat = new Map();
+let toastTimer = null;
+
+function toast(message) {
+  const el = $("toast");
+  el.textContent = message;
+  el.classList.remove("hidden");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.add("hidden"), 3200);
+}
+
+function showAuthMessage(message, type = "error") {
+  $("authMessage").className = type;
+  $("authMessage").textContent = message;
+}
+
+function showProfileMessage(message, type = "error") {
+  $("profileMessage").className = type;
+  $("profileMessage").textContent = message;
+}
+
+function escapeHTML(value = "") {
+  return String(value).replace(/[&<>"']/g, ch => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;",
+    '"': "&quot;", "'": "&#39;"
+  })[ch]);
+}
+
+function initials(name = "M") {
+  return name.trim().split(/\s+/).slice(0, 2)
+    .map(part => part[0] || "").join("").toUpperCase() || "M";
+}
+
+function formatTime(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  const now = new Date();
+  if (Number.isNaN(date.getTime())) return "";
+  if (date.toDateString() === now.toDateString()) {
+    return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  }
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  if (date.toDateString() === yesterday.toDateString()) return "Yesterday";
+  return date.toLocaleDateString([], { month: "short", day: "numeric" });
+}
+
+function formatMessageTime(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+}
+
+function avatarHTML(profile, className = "avatar") {
+  const name = profile?.display_name || profile?.username || "User";
+  const url = profile?.avatar_url;
+  if (url && /^https:\/\//i.test(url)) {
+    return `<div class="${className}"><img alt="" referrerpolicy="no-referrer" src="${escapeHTML(url)}"></div>`;
+  }
+  return `<div class="${className}">${escapeHTML(initials(name))}</div>`;
+}
+
+function setScreen(screen) {
+  $("authScreen").classList.toggle("hidden", screen !== "auth");
+  $("profileScreen").classList.toggle("hidden", screen !== "profile");
+  $("appScreen").classList.toggle("hidden", screen !== "app");
+}
+
+function setAuthMode(mode) {
+  const register = mode === "register";
+  $("authTitle").textContent = register ? "Create your account" : "Welcome back";
+  $("authDescription").textContent = register
+    ? "Register with your email and password."
+    : "Sign in to continue to your messages.";
+  $("signInBtn").textContent = register ? "Create account" : "Sign in";
+  $("registerBtn").textContent = register ? "Back to sign in" : "Register";
+  $("authPassword").autocomplete = register ? "new-password" : "current-password";
+  $("authForm").dataset.mode = mode;
+  showAuthMessage("");
+}
+
+async function signInOrRegister(event) {
+  event.preventDefault();
+  if (!db) return showAuthMessage("Set your Supabase URL and key first.");
+
+  const email = $("authEmail").value.trim();
+  const password = $("authPassword").value;
+  const register = $("authForm").dataset.mode === "register";
+
+  $("signInBtn").disabled = true;
+  $("registerBtn").disabled = true;
+  showAuthMessage(register ? "Creating account..." : "Signing in...", "muted");
+
+  try {
+    if (register) {
+      const { data, error } = await db.auth.signUp({ email, password });
+      if (error) throw error;
+
+      if (!data.session) {
+        showAuthMessage(
+          "Account created. Check your email to confirm your account, then sign in.",
+          "success"
+        );
+        return;
+      }
+    } else {
+      const { error } = await db.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+    }
+
+    await initialiseUser();
+  } catch (error) {
+    showAuthMessage(error.message || "Authentication failed.");
+  } finally {
+    $("signInBtn").disabled = false;
+    $("registerBtn").disabled = false;
+  }
+}
+
+async function loadProfile() {
+  const { data, error } = await db.from("profiles")
+    .select("id,display_name,username,avatar_url")
+    .eq("id", currentUser.id)
+    .maybeSingle();
+
+  if (error) throw error;
+  myProfile = data;
+  return data;
+}
+
+async function initialiseUser() {
+  const { data, error } = await db.auth.getUser();
+  if (error) throw error;
+  currentUser = data.user;
+  if (!currentUser) {
+    setScreen("auth");
+    return;
+  }
+
+  try {
+    const profile = await loadProfile();
+    if (!profile) {
+      $("displayName").value =
+        currentUser.user_metadata?.display_name || "";
+      $("username").value =
+        currentUser.user_metadata?.username || "";
+      $("avatarUrl").value = "";
+      setScreen("profile");
+      return;
+    }
+
+    await enterApp();
+  } catch (error) {
+    toast("Could not load your profile: " + error.message);
+    setScreen("profile");
+  }
+}
+
+async function saveProfile(event) {
+  event.preventDefault();
+  const display_name = $("displayName").value.trim();
+  const username = $("username").value.trim().toLowerCase();
+  const avatar_url = $("avatarUrl").value.trim() || null;
+
+  if (display_name.length < 1) return showProfileMessage("Enter a display name.");
+  if (!/^[a-z0-9_]{3,24}$/.test(username)) {
+    return showProfileMessage("Username must be 3–24 characters: letters, numbers or underscores.");
+  }
+  if (avatar_url && !/^https:\/\//i.test(avatar_url)) {
+    return showProfileMessage("Profile photo URL must start with https://.");
+  }
+
+  const button = $("profileForm").querySelector("button[type=submit]");
+  button.disabled = true;
+  showProfileMessage("Saving profile...", "muted");
+
+  try {
+    const { error } = await db.from("profiles").upsert({
+      id: currentUser.id,
+      display_name,
+      username,
+      avatar_url
+    }, { onConflict: "id" });
+
+    if (error) throw error;
+    await loadProfile();
+    await enterApp();
+  } catch (error) {
+    showProfileMessage(error.message || "Could not save profile.");
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function enterApp() {
+  setScreen("app");
+  $("pageTitle").textContent = "Chats";
+  currentPage = "Chats";
+  renderNavigation();
+  showWelcome();
+  await loadChats();
+  startRealtime();
+}
+
+function showWelcome() {
+  activeChat = null;
+  $("workspace").classList.remove("chat-open");
+  $("conversationHeader").classList.add("hidden");
+  $("messages").classList.add("hidden");
+  $("composeForm").classList.add("hidden");
+  $("welcome").classList.remove("hidden");
+  $("appScreen").classList.remove("chat-mode");
+}
+
+function renderNavigation() {
+  document.querySelectorAll(".nav-item").forEach(button => {
+    const active = button.dataset.page === currentPage;
+    button.classList.toggle("active", active);
+    if (active) button.setAttribute("aria-current", "page");
+    else button.removeAttribute("aria-current");
+  });
+}
+
+async function loadChats() {
+  if (!currentUser) return;
+
+  const list = $("chatList");
+  list.innerHTML = '<p class="muted small" style="padding:24px 8px">Loading conversations...</p>';
+
+  try {
+    /* Load only messages involving the signed-in user. RLS must also enforce this. */
+    const { data: messages, error } = await db.from("messages")
+      .select("id,sender_id,recipient_id,body,created_at,read_at")
+      .or(`sender_id.eq.${currentUser.id},recipient_id.eq.${currentUser.id}`)
+      .order("created_at", { ascending: false })
+      .limit(1000);
+
+    if (error) throw error;
+    messageCache = messages || [];
+
+    const otherIds = [...new Set(messageCache.map(message =>
+      message.sender_id === currentUser.id
+        ? message.recipient_id : message.sender_id
+    ).filter(Boolean))];
+
+    profilesCache = new Map();
+    if (otherIds.length) {
+      const { data: profiles, error: profileError } = await db.from("profiles")
+        .select("id,display_name,username,avatar_url")
+        .in("id", otherIds);
+
+      if (profileError) throw profileError;
+      (profiles || []).forEach(profile => profilesCache.set(profile.id, profile));
+    }
+
+    /* One row per actual conversation; no placeholder contacts are fabricated. */
+    const chats = new Map();
+    for (const message of messageCache) {
+      const otherId = message.sender_id === currentUser.id
+        ? message.recipient_id : message.sender_id;
+
+      if (!otherId) continue;
+      if (!chats.has(otherId)) {
+        chats.set(otherId, { userId: otherId, last: message, unread: 0 });
+      }
+
+      if (message.recipient_id === currentUser.id &&
+          !message.read_at) {
+        chats.get(otherId).unread++;
+      }
+    }
+
+    renderChats([...chats.values()]);
+  } catch (error) {
+    list.innerHTML = "";
+    showListMessage("Could not load conversations. Check your Supabase tables and access policies.");
+    console.error("loadChats:", error);
+  }
+}
+
+function showListMessage(message) {
+  $("chatList").innerHTML =
+    `<div class="muted small" style="padding:24px 8px;line-height:1.7">${escapeHTML(message)}</div>`;
+}
+
+function renderChats(chats) {
+  const list = $("chatList");
+  const query = $("searchInput").value.trim().toLowerCase();
+
+  const filtered = chats.filter(chat => {
+    const profile = profilesCache.get(chat.userId);
+    const name = profile?.display_name || profile?.username || "";
+    const username = profile?.username || "";
+    const preview = chat.last?.body || "";
+
+    if (query && !`${name} ${username} ${preview}`.toLowerCase().includes(query)) {
+      return false;
+    }
+    if (activeFilter === "unread" && chat.unread === 0) return false;
+
+    /* Group conversations need a group-membership schema. */
+    if (activeFilter === "groups") return false;
+
+    return true;
+  });
+
+  if (!filtered.length) {
+    let title = "Your chats appear here";
+    let description = "Start a conversation with someone to see your messages here.";
+
+    if (activeFilter === "unread") {
+      title = "No unread conversations";
+      description = "You have no unread messages in your conversations.";
+    } else if (activeFilter === "groups") {
+      title = "No group conversations";
+      description = "Group chats will appear here when group messaging is connected.";
+    } else if (query) {
+      title = "No matching conversations";
+      description = "Try another name or username, or start a new chat.";
+    }
+
+    list.innerHTML = `
+      <div style="padding:45px 12px;text-align:center">
+        <div class="welcome-icon" style="margin-bottom:17px">✦</div>
+        <strong>${escapeHTML(title)}</strong>
+        <p class="muted small" style="line-height:1.7;margin-top:9px">${escapeHTML(description)}</p>
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = filtered.map(chat => {
+    const profile = profilesCache.get(chat.userId) || {};
+    const name = profile.display_name || profile.username || "Messenger user";
+    const last = chat.last;
+    const mine = last.sender_id === currentUser.id;
+    const tick = mine ? renderTick(last, chat.userId) : "";
+
+    return `
+      <article class="chat-row" data-user-id="${escapeHTML(chat.userId)}" tabindex="0" role="button"
+               aria-label="Open conversation with ${escapeHTML(name)}">
+        ${avatarHTML(profile)}
+        <div class="chat-details">
+          <div class="chat-top">
+            <span class="chat-name">${escapeHTML(name)}</span>
+            <span class="chat-time">${escapeHTML(formatTime(last.created_at))}</span>
+          </div>
+          <div class="chat-bottom">
+            <span class="chat-preview">${mine ? "You: " : ""}${escapeHTML(last.body || "")}</span>
+            <span class="chat-extra">
+              ${tick}
+              ${chat.unread ? `<span class="unread-badge">${chat.unread > 99 ? "99+" : chat.unread}</span>` : ""}
+            </span>
+          </div>
+        </div>
+      </article>`;
+  }).join("");
+
+  list.querySelectorAll(".chat-row").forEach(row => {
+    const open = () => openChat(row.dataset.userId);
+    row.addEventListener("click", open);
+    row.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        open();
+      }
+    });
+  });
+}
+
+/* Tick rules:
+   grey single = receiver currently offline;
+   grey double = receiver online, message unread;
+   blue double = message read.
+   These depend on the read_at column and realtime presence. */
+function renderTick(message, recipientId) {
+  if (message.read_at) {
+    return '<span class="ticks read" title="Seen" aria-label="Seen">✓✓</span>';
+  }
+  if (onlineUsers.has(recipientId)) {
+    return '<span class="ticks sent" title="Delivered online, not seen" aria-label="Not seen">✓✓</span>';
+  }
+  return '<span class="ticks sent" title="Receiver offline" aria-label="Receiver offline">✓</span>';
+}
+
+async function openChat(userId) {
+  const profile = profilesCache.get(userId);
+  if (!profile) {
+    toast("This user's profile could not be found.");
+    return;
+  }
+
+  activeChat = { userId, profile };
+  $("workspace").classList.add("chat-open");
+  $("appScreen").classList.add("chat-mode");
+  $("welcome").classList.add("hidden");
+  $("conversationHeader").classList.remove("hidden");
+  $("messages").classList.remove("hidden");
+  $("composeForm").classList.remove("hidden");
+
+  $("conversationAvatar").innerHTML = "";
+  if (profile.avatar_url && /^https:\/\//i.test(profile.avatar_url)) {
+    $("conversationAvatar").innerHTML =
+      `<img alt="" referrerpolicy="no-referrer" src="${escapeHTML(profile.avatar_url)}">`;
+  } else {
+    $("conversationAvatar").textContent =
+      initials(profile.display_name || profile.username);
+  }
+  $("conversationName").textContent = profile.display_name || profile.username;
+  $("conversationStatus").textContent =
+    onlineUsers.has(userId) ? "Online" : "Offline";
+
+  await loadMessages(userId);
+  await markConversationRead(userId);
+  $("messageInput").focus();
+}
+
+async function loadMessages(userId) {
+  const area = $("messages");
+  area.innerHTML = '<p class="muted small">Loading messages...</p>';
+
+  const { data, error } = await db.from("messages")
+    .select("id,sender_id,recipient_id,body,created_at,read_at")
+    .or(
+      `and(sender_id.eq.${currentUser.id},recipient_id.eq.${userId}),and(sender_id.eq.${userId},recipient_id.eq.${currentUser.id})`
+    )
+    .order("created_at", { ascending: true })
+    .limit(1000);
+
+  if (error) {
+    area.innerHTML = '<p class="error">Could not load messages.</p>';
+    console.error("loadMessages:", error);
+    return;
+  }
+
+  area.innerHTML = (data || []).map(message => renderMessage(message, userId)).join("");
+  area.scrollTop = area.scrollHeight;
+}
+
+function renderMessage(message, otherId) {
+  const mine = message.sender_id === currentUser.id;
+  const tick = mine ? renderTick(message, otherId) : "";
+
+  return `
+    <article class="message ${mine ? "mine" : ""}" data-message-id="${escapeHTML(message.id)}">
+      <div class="message-body">${escapeHTML(message.body || "")}</div>
+      <div class="message-meta">
+        <time>${escapeHTML(formatMessageTime(message.created_at))}</time>
+        ${tick}
+      </div>
+    </article>`;
+}
+
+async function markConversationRead(userId) {
+  if (!currentUser || !userId) return;
+
+  const now = new Date().toISOString();
+  const { error } = await db.from("messages")
+    .update({ read_at: now })
+    .eq("sender_id", userId)
+    .eq("recipient_id", currentUser.id)
+    .is("read_at", null);
+
+  if (error) {
+    console.warn("Could not mark messages read. Check UPDATE RLS policy.", error);
+    return;
+  }
+
+  await loadChats();
+  if (activeChat?.userId === userId) await loadMessages(userId);
+}
+
+async function sendMessage(event) {
+  event.preventDefault();
+  if (!activeChat) return;
+
+  const body = $("messageInput").value.trim();
+  if (!body) return;
+
+  const button = $("sendBtn");
+  button.disabled = true;
+
+  try {
+    const { error } = await db.from("messages").insert({
+      sender_id: currentUser.id,
+      recipient_id: activeChat.userId,
+      body
+    });
+
+    if (error) throw error;
+
+    $("messageInput").value = "";
+    await loadMessages(activeChat.userId);
+    await loadChats();
+  } catch (error) {
+    toast("Message was not sent: " + error.message);
+  } finally {
+    button.disabled = false;
+    $("messageInput").focus();
+  }
+}
+
+async function searchUsers() {
+  const query = $("searchInput").value.trim().replace(/^@/, "");
+  if (!query) {
+    searchMode = false;
+    await loadChats();
+    return;
+  }
+
+  searchMode = true;
+  const list = $("chatList");
+  list.innerHTML = '<p class="muted small" style="padding:20px 8px">Searching users...</p>';
+
+  try {
+    const { data, error } = await db.from("profiles")
+      .select("id,display_name,username,avatar_url")
+      .neq("id", currentUser.id)
+      .ilike("username", `%${query}%`)
+      .limit(30);
+
+    if (error) throw error;
+
+    if (!data?.length) {
+      list.innerHTML = '<p class="muted small" style="padding:24px 8px">No users found.</p>';
+      return;
+    }
+
+    data.forEach(profile => profilesCache.set(profile.id, profile));
+    list.innerHTML = data.map(profile => `
+      <article class="chat-row" data-user-id="${escapeHTML(profile.id)}" tabindex="0" role="button">
+        ${avatarHTML(profile)}
+        <div class="chat-details">
+          <div class="chat-name">${escapeHTML(profile.display_name || profile.username)}</div>
+          <span class="chat-preview">@${escapeHTML(profile.username || "")}</span>
+        </div>
+        <span class="muted small">Message</span>
+      </article>`).join("");
+
+    list.querySelectorAll(".chat-row").forEach(row => {
+      const open = async () => {
+        const userId = row.dataset.userId;
+        if (!messageCache.some(m =>
+          (m.sender_id === currentUser.id && m.recipient_id === userId) ||
+          (m.sender_id === userId && m.recipient_id === currentUser.id))) {
+          /* A new conversation exists when the first message is sent. */
+          activeChat = { userId, profile: profilesCache.get(userId) };
+          $("workspace").classList.add("chat-open");
+          $("appScreen").classList.add("chat-mode");
+          $("welcome").classList.add("hidden");
+          $("conversationHeader").classList.remove("hidden");
+          $("messages").classList.remove("hidden");
+          $("composeForm").classList.remove("hidden");
+          const p = activeChat.profile;
+          $("conversationAvatar").textContent = initials(p.display_name || p.username);
+          $("conversationName").textContent = p.display_name || p.username;
+          $("conversationStatus").textContent = onlineUsers.has(userId) ? "Online" : "Offline";
+          $("messages").innerHTML = '<p class="muted small">No messages yet. Say hello!</p>';
+        } else {
+          await openChat(userId);
+        }
+        searchMode = false;
+      };
+      row.addEventListener("click", open);
+      row.addEventListener("keydown", event => {
+        if (event.key === "Enter") open();
+      });
+    });
+  } catch (error) {
+    list.innerHTML = '<p class="error" style="padding:20px 8px">Could not search users. Check your profiles SELECT policy.</p>';
+    console.error("searchUsers:", error);
+  }
+}
+
+function startRealtime() {
+  if (messageChannel) db.removeChannel(messageChannel);
+  if (presenceChannel) db.removeChannel(presenceChannel);
+  if (profileChannel) db.removeChannel(profileChannel);
+
+  messageChannel = db.channel("messages-live-" + currentUser.id)
+    .on("postgres_changes", {
+      event: "*", schema: "public", table: "messages"
+    }, async payload => {
+      const m = payload.new || payload.old;
+      if (!m) return;
+      const participant = m.sender_id === currentUser.id ||
+                          m.recipient_id === currentUser.id;
+      if (!participant) return;
+
+      await loadChats();
+      if (activeChat &&
+          (m.sender_id === activeChat.userId ||
+           m.recipient_id === activeChat.userId)) {
+        await loadMessages(activeChat.userId);
+        if (m.sender_id === activeChat.userId &&
+            m.recipient_id === currentUser.id) {
+          await markConversationRead(activeChat.userId);
+        }
+      }
+    })
+    .subscribe();
+
+  /* Supabase Presence reports connected app sessions, not guaranteed human attention. */
+  presenceChannel = db.channel("messenger-presence", {
+    config: { presence: { key: currentUser.id }
+  }});
+
+  presenceChannel
+    .on("presence", { event: "sync" }, () => {
+      const state = presenceChannel.presenceState();
+      onlineUsers = new Set(Object.keys(state));
+      updateOnlineUI();
+    })
+    .subscribe(async status => {
+      if (status === "SUBSCRIBED") {
+        await presenceChannel.track({
+          user_id: currentUser.id,
+          online_at: new Date().toISOString()
+        });
+      }
+    });
+
+  profileChannel = db.channel("profiles-live-" + currentUser.id)
+    .on("postgres_changes", {
+      event: "*", schema: "public", table: "profiles"
+    }, async () => {
+      await loadChats();
+    })
+    .subscribe();
+}
+
+function updateOnlineUI() {
+  if (activeChat) {
+    $("conversationStatus").textContent =
+      onlineUsers.has(activeChat.userId) ? "Online" : "Offline";
+  }
+  if (currentPage === "Chats" && !searchMode) {
+    renderChats(buildChatsFromCache());
+  }
+}
+
+function buildChatsFromCache() {
+  const chats = new Map();
+  for (const message of messageCache) {
+    const otherId = message.sender_id === currentUser.id
+      ? message.recipient_id : message.sender_id;
+    if (!otherId) continue;
+    if (!chats.has(otherId)) chats.set(otherId, { userId: otherId, last: message, unread: 0 });
+    if (message.recipient_id === currentUser.id && !message.read_at) chats.get(otherId).unread++;
+  }
+  return [...chats.values()];
+}
+
+function showNewChatSearch() {
+  currentPage = "Chats";
+  renderNavigation();
+  $("pageTitle").textContent = "Chats";
+  $("searchInput").placeholder = "Search by username";
+  $("searchInput").value = "";
+  searchMode = true;
+  $("searchInput").focus();
+  $("filters").classList.add("hidden");
+  $("searchWrap").scrollIntoView({ block: "nearest" });
+  $("chatList").innerHTML =
+    '<p class="muted small" style="padding:20px 8px">Search for a username to start a conversation.</p>';
+}
+
+function showSettings() {
+  const list = $("chatList");
+  $("pageTitle").textContent = "Settings";
+  $("searchWrap").classList.add("hidden");
+  $("filters").classList.add("hidden");
+  list.innerHTML = `
+    <div style="padding:20px 5px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:center;gap:12px">
+        ${avatarHTML(myProfile)}
+        <div><strong>${escapeHTML(myProfile.display_name)}</strong>
+        <p class="muted small" style="margin-top:5px">@${escapeHTML(myProfile.username)}</p></div>
+      </div>
+      <button class="secondary" id="editProfileBtn">Edit profile</button>
+      <button class="secondary" id="signOutBtn">Sign out</button>
+    </div>`;
+  $("editProfileBtn").addEventListener("click", () => {
+    $("displayName").value = myProfile.display_name || "";
+    $("username").value = myProfile.username || "";
+    $("avatarUrl").value = myProfile.avatar_url || "";
+    setScreen("profile");
+  });
+  $("signOutBtn").addEventListener("click", async () => {
+    try {
+      if (presenceChannel) await presenceChannel.untrack();
+      const { error } = await db.auth.signOut();
+      if (error) throw error;
+      currentUser = null;
+      myProfile = null;
+      setScreen("auth");
+    } catch (error) {
+      toast("Could not sign out: " + error.message);
+    }
+  });
+}
+
+function resetSidebar() {
+  $("searchWrap").classList.remove("hidden");
+  $("filters").classList.remove("hidden");
+  $("searchInput").placeholder = "Search conversations";
+}
+
+function showOtherPage(page) {
+  currentPage = page;
+  renderNavigation();
+  showWelcome();
+  $("pageTitle").textContent = page;
+  $("searchWrap").classList.add("hidden");
+  $("filters").classList.add("hidden");
+
+  if (page === "Settings") return showSettings();
+
+  $("chatList").innerHTML = `
+    <div style="padding:45px 12px;text-align:center">
+      <div class="welcome-icon" style="margin-bottom:17px">✦</div>
+      <strong>${escapeHTML(page)}</strong>
+      <p class="muted small" style="line-height:1.7;margin-top:9px">
+        This section needs its own feature and database integration.
+      </p>
+    </div>`;
+}
+
+/* Events */
+$("authForm").addEventListener("submit", signInOrRegister);
+$("registerBtn").addEventListener("click", () => {
+  setAuthMode($("authForm").dataset.mode === "register" ? "login" : "register");
+});
+$("profileForm").addEventListener("submit", saveProfile);
+$("composeForm").addEventListener("submit", sendMessage);
+$("searchInput").addEventListener("input", () => {
+  if (searchMode) {
+    clearTimeout(window.__userSearchTimer);
+    window.__userSearchTimer = setTimeout(searchUsers, 250);
+  } else {
+    renderChats(buildChatsFromCache());
+  }
+});
+$("newChatBtn").addEventListener("click", showNewChatSearch);
+$("menuBtn").addEventListener("click", () => {
+  if (currentPage === "Settings") return showOtherPage("Chats");
+  showOtherPage("Settings");
+});
+$("backBtn").addEventListener("click", () => {
+  $("workspace").classList.remove("chat-open");
+  $("appScreen").classList.remove("chat-mode");
+  activeChat = null;
+});
+document.querySelectorAll(".filter").forEach(button => {
+  button.addEventListener("click", () => {
+    activeFilter = button.dataset.filter;
+    document.querySelectorAll(".filter").forEach(item => {
+      const active = item === button;
+      item.classList.toggle("active", active);
+      item.setAttribute("aria-pressed", String(active));
+    });
+    renderChats(buildChatsFromCache());
+  });
+});
+document.querySelectorAll(".nav-item").forEach(button => {
+  button.addEventListener("click", () => {
+    const page = button.dataset.page;
+    resetSidebar();
+    $("searchInput").value = "";
+    searchMode = false;
+
+    if (page === "Chats") {
+      currentPage = "Chats";
+      renderNavigation();
+      $("pageTitle").textContent = "Chats";
+      showWelcome();
+      loadChats();
+    } else {
+      showOtherPage(page);
+    }
+  });
+});
+$("forgotBtn").addEventListener("click", async () => {
+  if (!db) return showAuthMessage("Configure Supabase first.");
+  const email = $("authEmail").value.trim();
+  if (!email) return showAuthMessage("Enter your email address first.");
+  const { error } = await db.auth.resetPasswordForEmail(email);
+  showAuthMessage(error ? error.message : "If the account exists, a reset link will be sent.", error ? "error" : "success");
+});
+
+/* Clock is a UI clock only. Device signal and battery are illustrative icons. */
+function updateClock() {
+  $("deviceTime").textContent = new Date().toLocaleTimeString([], {
+    hour: "numeric", minute: "2-digit"
+  });
+}
+updateClock();
+setInterval(updateClock, 30000);
+
+async function boot() {
+  if (!window.supabase) {
+    showAuthMessage("Supabase library could not load. Check your internet connection.");
+    return;
+  }
+
+  if (SUPABASE_URL === "YOUR_SUPABASE_URL" ||
+      SUPABASE_KEY === "YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY") {
+    setScreen("auth");
+    showAuthMessage("Add your Supabase project URL and publishable/anon key in the code.");
+    return;
+  }
+
+  db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+    auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+  });
+
+  db.auth.onAuthStateChange((event, session) => {
+    if (event === "SIGNED_OUT") {
+      currentUser = null;
+      setScreen("auth");
+    }
+  });
+
+  try {
+    const { data, error } = await db.auth.getSession();
+    if (error) throw error;
+    if (data.session) await initialiseUser();
+    else {
+      setAuthMode("login");
+      setScreen("auth");
+    }
+  } catch (error) {
+    setScreen("auth");
+    showAuthMessage(error.message || "Could not initialise Messenger.");
+  }
+}
+boot();
+</script>
+</body>
+</html>
