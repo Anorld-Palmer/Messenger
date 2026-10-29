@@ -703,9 +703,9 @@ function subscribeMessages() {
 
 function receiptHTML(m) {
   if (m.sender_id !== S.user.id) return "";
-  if (m.read_at) return `<span class="tick read" title="Read">✓✓</span>`;
-  if (m.delivered_at) return `<span class="tick" title="Delivered">✓✓</span>`;
-  return `<span class="tick" title="Sent">✓</span>`;
+  if (m.read_at) return `<span class="tick read" title="Read">✔️✔️</span>`;
+  if (m.delivered_at) return `<span class="tick" title="Delivered">✔️✔️</span>`;
+  return `<span class="tick" title="Sent">✔️</span>`;
 }
 
 function renderMessages() {
@@ -1393,7 +1393,7 @@ function toggleMute() {
   if (!S.localStream) return;
   S.muted=!S.muted;
   S.localStream.getAudioTracks().forEach(t=>t.enabled=!S.muted);
-  $("muteButton").textContent=S.muted?"🔇":"🎙";
+  $("muteButton").textContent=S.muted?"🔇":"🎤";
 }
 function toggleCamera() {
   if (!S.localStream) return;
@@ -1401,7 +1401,7 @@ function toggleCamera() {
   if (!tracks.length) { toast("This is an audio-only call."); return; }
   S.cameraOff=!S.cameraOff;
   tracks.forEach(t=>t.enabled=!S.cameraOff);
-  $("cameraButton").textContent=S.cameraOff?"🚫":"▣";
+  $("cameraButton").textContent=S.cameraOff?"🚫":"☯️";
 }
 
 /* =========================================================
