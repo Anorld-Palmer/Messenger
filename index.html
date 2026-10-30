@@ -343,7 +343,303 @@ hr{border:0;border-top:1px solid var(--border);margin:16px 0}
     padding: 29px 21px;
   }
 }
-</style>
+</* MODERN CHATS PAGE */
+
+#chatsPage {
+  min-height: 100%;
+  padding: 24px 18px 30px;
+  background: #080d18;
+  color: #f7f9ff;
+  overflow-y: auto;
+}
+
+.chats-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 25px;
+}
+
+.chats-header h1 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 750;
+  letter-spacing: -1px;
+}
+
+.chats-header p {
+  margin: 6px 0 0;
+  color: #8490a6;
+  font-size: 13px;
+}
+
+.new-chat-btn {
+  width: 46px;
+  height: 46px;
+  border: 1px solid #26334b;
+  border-radius: 16px;
+  background: #131e32;
+  color: #64a5ff;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.new-chat-btn svg {
+  width: 21px;
+  height: 21px;
+}
+
+.chat-search {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  border: 1px solid #202c40;
+  border-radius: 17px;
+  background: #111a2a;
+  margin-bottom: 27px;
+}
+
+.chat-search svg {
+  width: 19px;
+  color: #8391a9;
+}
+
+.chat-search input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: white;
+  font-size: 14px;
+}
+
+.chat-search input::placeholder {
+  color: #78869c;
+}
+
+.stories-heading,
+.conversation-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.stories-heading h3,
+.conversation-heading h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.stories-heading button {
+  background: transparent;
+  border: none;
+  color: #65a5ff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.chat-stories {
+  display: flex;
+  align-items: flex-start;
+  gap: 17px;
+  overflow-x: auto;
+  padding: 3px 1px 19px;
+  scrollbar-width: none;
+}
+
+.chat-stories::-webkit-scrollbar {
+  display: none;
+}
+
+.story-person {
+  flex: 0 0 65px;
+  text-align: center;
+  cursor: pointer;
+}
+
+.story-avatar {
+  width: 59px;
+  height: 59px;
+  border-radius: 50%;
+  padding: 3px;
+  margin: 0 auto 7px;
+  background: linear-gradient(135deg, #258bff, #895cff);
+}
+
+.story-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #080d18;
+}
+
+.story-person span {
+  display: block;
+  font-size: 11px;
+  color: #aab5c8;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.conversation-heading {
+  margin-top: 7px;
+  margin-bottom: 12px;
+}
+
+.conversation-heading span {
+  font-size: 12px;
+  color: #8391a9;
+}
+
+.conversation-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.conversation-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  padding: 14px 2px;
+  border: none;
+  border-bottom: 1px solid #192438;
+  background: transparent;
+  color: white;
+  text-align: left;
+  cursor: pointer;
+}
+
+.conversation-item:active {
+  background: #111a2a;
+}
+
+.conversation-avatar {
+  width: 53px;
+  height: 53px;
+  flex: 0 0 53px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #1b2a42;
+}
+
+.conversation-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.conversation-top,
+.conversation-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.conversation-name {
+  font-size: 14px;
+  font-weight: 700;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.conversation-time {
+  color: #8190a8;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.conversation-preview {
+  margin-top: 7px;
+  color: #8e9bb0;
+  font-size: 12px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.conversation-preview.unread {
+  color: #e5ecfa;
+  font-weight: 600;
+}
+
+.conversation-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.unread-count {
+  min-width: 19px;
+  height: 19px;
+  padding: 0 5px;
+  border-radius: 20px;
+  display: grid;
+  place-items: center;
+  background: #2586ff;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.online-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #35d68a;
+  border: 2px solid #080d18;
+}
+
+.chat-empty {
+  text-align: center;
+  padding: 55px 15px;
+  color: #8997ad;
+}
+
+.empty-icon {
+  width: 65px;
+  height: 65px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 17px;
+  border-radius: 22px;
+  background: #14223a;
+  color: #65a5ff;
+}
+
+.empty-icon svg {
+  width: 29px;
+  height: 29px;
+}
+
+.chat-empty h3 {
+  color: #f1f5ff;
+  font-size: 16px;
+  margin: 0 0 8px;
+}
+
+.chat-empty p {
+  font-size: 13px;
+  margin: 0;
+}
+
+@media (min-width: 700px) {
+  #chatsPage {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 30px;
+  }
+}
+  </style>
 </head>
 
 <body>
@@ -441,10 +737,52 @@ hr{border:0;border-top:1px solid var(--border);margin:16px 0}
   </header>
 
   <main id="main">
-    <section id="chatsPage">
-      <input class="search" id="chatSearch" placeholder="Search conversations" oninput="renderChats()">
-      <div id="chatList"></div>
-    </section>
+    <section id="chatsPage" class="page active">
+  <div class="chats-header">
+    <div>
+      <h1>Chats</h1>
+      <p>Your messages, all in one place</p>
+    </div>
+
+    <button class="new-chat-btn" onclick="openNewChat()" aria-label="New chat">
+      <i data-lucide="square-pen"></i>
+    </button>
+  </div>
+
+  <div class="chat-search">
+    <i data-lucide="search"></i>
+    <input
+      id="chatSearch"
+      type="search"
+      placeholder="Search conversations"
+      autocomplete="off"
+    >
+  </div>
+
+  <div class="stories-heading">
+    <h3>Stories</h3>
+    <button onclick="switchPage('updates')">See all</button>
+  </div>
+
+  <div id="chatStories" class="chat-stories">
+    <!-- Real stories are loaded here -->
+  </div>
+
+  <div class="conversation-heading">
+    <h3>Messages</h3>
+    <span id="chatCount">0</span>
+  </div>
+
+  <div id="conversationList" class="conversation-list">
+    <div class="chat-empty">
+      <div class="empty-icon">
+        <i data-lucide="message-circle"></i>
+      </div>
+      <h3>No conversations yet</h3>
+      <p>Your conversations will appear here.</p>
+    </div>
+  </div>
+</section>
     <section id="updatesPage" class="hidden">
       <div class="row between">
         <h2 class="section-title">Updates</h2>
