@@ -737,51 +737,102 @@ hr{border:0;border-top:1px solid var(--border);margin:16px 0}
   </header>
 
   <main id="main">
-    <section id="chatsPage" class="page active">
-  <div class="chats-header">
-    <div>
-      <h1>Chats</h1>
-      <p>Your messages, all in one place</p>
+    <section id="chatsScreen" class="messenger-layout">
+
+  <!-- LEFT: CONVERSATION LIST -->
+  <aside class="messages-panel">
+
+    <div class="messages-heading">
+      <h1>Messages</h1>
+      <button class="compose-button" onclick="openSearch()" title="New message">
+        <i data-lucide="square-pen"></i>
+      </button>
     </div>
 
-    <button class="new-chat-btn" onclick="openNewChat()" aria-label="New chat">
-      <i data-lucide="square-pen"></i>
-    </button>
-  </div>
+    <div class="messages-search">
+      <i data-lucide="search"></i>
+      <input id="chatSearch" type="search" placeholder="Search">
+    </div>
 
-  <div class="chat-search">
-    <i data-lucide="search"></i>
-    <input
-      id="chatSearch"
-      type="search"
-      placeholder="Search conversations"
-      autocomplete="off"
-    >
-  </div>
+    <div class="message-filters">
+      <button class="filter active" onclick="filterChats('all',this)">All</button>
+      <button class="filter" onclick="filterChats('unread',this)">Others</button>
+    </div>
 
-  <div class="stories-heading">
-    <h3>Stories</h3>
-    <button onclick="switchPage('updates')">See all</button>
-  </div>
-
-  <div id="chatStories" class="chat-stories">
-    <!-- Real stories are loaded here -->
-  </div>
-
-  <div class="conversation-heading">
-    <h3>Messages</h3>
-    <span id="chatCount">0</span>
-  </div>
-
-  <div id="conversationList" class="conversation-list">
-    <div class="chat-empty">
-      <div class="empty-icon">
+    <div id="conversationList" class="conversation-list">
+      <div class="empty-conversations">
         <i data-lucide="message-circle"></i>
+        <p>Your conversations will appear here.</p>
       </div>
-      <h3>No conversations yet</h3>
-      <p>Your conversations will appear here.</p>
     </div>
-  </div>
+
+  </aside>
+
+
+  <!-- RIGHT: SELECTED CONVERSATION -->
+  <main id="chatPanel" class="conversation-panel">
+
+    <div id="conversationPlaceholder" class="conversation-placeholder">
+      <i data-lucide="messages-square"></i>
+      <h2>Your messages</h2>
+      <p>Select a conversation to start chatting.</p>
+    </div>
+
+    <div id="activeConversation" class="active-conversation hidden">
+
+      <div class="conversation-header">
+
+        <button class="back-to-chats" onclick="backToChats()">
+          <i data-lucide="arrow-left"></i>
+        </button>
+
+        <img id="activeChatAvatar" src="" alt="" class="active-avatar">
+
+        <div class="active-user-info">
+          <h3 id="activeChatName">Contact</h3>
+          <span id="activeChatStatus">Offline</span>
+        </div>
+
+        <div class="call-actions">
+          <button onclick="startVoiceCall()" title="Voice call">
+            <i data-lucide="phone"></i>
+          </button>
+
+          <button onclick="startVideoCall()" title="Video call">
+            <i data-lucide="video"></i>
+          </button>
+        </div>
+
+      </div>
+
+      <div id="chatMessages" class="chat-messages">
+      </div>
+
+      <form id="messageForm" class="message-composer">
+
+        <button type="button" class="attachment-button"
+          onclick="openAttachmentMenu()">
+          <i data-lucide="plus"></i>
+        </button>
+
+        <input
+          id="messageInput"
+          type="text"
+          placeholder="Type a message..."
+          autocomplete="off"
+          required
+        >
+
+        <button type="submit" class="send-message-button">
+          <i data-lucide="send"></i>
+        </button>
+
+      </form>
+
+    </div>
+
+  </main>
+
 </section>
     <section id="updatesPage" class="hidden">
       <div class="row between">
