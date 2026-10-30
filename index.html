@@ -9,7 +9,29 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<style>
+<style>.navbtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.navbtn i {
+  width: 23px;
+  height: 23px;
+  stroke: #1877f2;
+  stroke-width: 2.2;
+}
+
+.navbtn.active {
+  color: #1877f2;
+}
+
+.navbtn.active i {
+  stroke: #1877f2;
+  fill: #1877f2;
+}
 :root {
   --bg:#101116;
   --panel:#191a22;
@@ -101,7 +123,10 @@ hr{border:0;border-top:1px solid var(--border);margin:16px 0}
 </style>
 </head>
 
-<body>
+<body><script src="https://unpkg.com/lucide@latest"></script>
+<script>
+  lucide.createIcons();
+</script></body>
 <section id="authPage">
   <div class="authbox">
     <div class="logo">Messenger<span>.</span></div>
@@ -181,10 +206,26 @@ hr{border:0;border-top:1px solid var(--border);margin:16px 0}
   </main>
 
   <nav id="bottomNav">
-    <button class="navbtn active" data-page="chats" onclick="switchPage('chats')"><span>☷</span>Chats</button>
-    <button class="navbtn" data-page="updates" onclick="switchPage('updates')"><span>◉</span>Updates</button>
-    <button class="navbtn" data-page="calls" onclick="switchPage('calls')"><span>☎</span>Calls</button>
-    <button class="navbtn" data-page="contacts" onclick="switchPage('contacts')"><span>♙</span>Contacts</button>
+   <button class="navbtn active" data-page="chats" onclick="switchPage('chats')">
+  <i data-lucide="message-circle"></i>
+  Chats
+</button>
+
+<button class="navbtn" data-page="updates" onclick="switchPage('updates')">
+  <i data-lucide="circle-dot"></i>
+  Updates
+</button>
+
+<button class="navbtn" data-page="calls" onclick="switchPage('calls')">
+  <i data-lucide="phone-call"></i>
+  Calls
+</button>
+
+<button class="navbtn" data-page="contacts" onclick="switchPage('contacts')">
+  <i data-lucide="users"></i>
+  Contacts
+</button>
+ 
   </nav>
 </section>
 
