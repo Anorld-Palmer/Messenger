@@ -126,28 +126,79 @@ hr{border:0;border-top:1px solid var(--border);margin:16px 0}
 <body>
 <section id="authPage">
   <div class="authbox">
-    <div class="logo">Messenger<span>.</span></div>
-    <p class="muted">Your conversations, together.</p>
-    <div class="tabs">
-      <button id="loginTab" class="primary" onclick="showAuth('login')">Log in</button>
-      <button id="registerTab" class="secondary" onclick="showAuth('register')">Create account</button>
+
+    <div class="auth-logo">
+      <div class="logo-icon">
+        <i data-lucide="message-circle"></i>
+      </div>
+      <div class="logo">Messenger<span>.</span></div>
     </div>
+
+    <div class="auth-heading">
+      <h1 id="authHeading">Welcome back</h1>
+      <p id="authSubtitle">Sign in to continue your conversations.</p>
+    </div>
+
+    <div class="tabs">
+      <button id="loginTab" class="primary" onclick="showAuth('login')">
+        Log in
+      </button>
+      <button id="registerTab" class="secondary" onclick="showAuth('register')">
+        Create account
+      </button>
+    </div>
+
     <form id="authForm" class="stack">
+
       <div id="nameField" class="hidden">
         <label class="small">Display name</label>
-        <input id="displayName" maxlength="60" autocomplete="name" placeholder="Your name">
+        <div class="auth-input">
+          <i data-lucide="user"></i>
+          <input id="displayName" maxlength="60"
+            autocomplete="name" placeholder="Your name">
+        </div>
       </div>
+
       <div id="usernameField" class="hidden">
         <label class="small">Username</label>
-        <input id="username" maxlength="24" autocomplete="username" placeholder="your_username">
+        <div class="auth-input">
+          <i data-lucide="at-sign"></i>
+          <input id="username" maxlength="24"
+            autocomplete="username" placeholder="your_username">
+        </div>
       </div>
-      <label class="small">Email address</label>
-      <input id="email" type="email" autocomplete="email" required placeholder="you@example.com">
-      <label class="small">Password</label>
-      <input id="password" type="password" minlength="8" autocomplete="current-password" required placeholder="At least 8 characters">
-      <button class="primary" type="submit" id="authSubmit">Log in</button>
+
+      <div class="auth-field">
+        <label class="small">Email address</label>
+        <div class="auth-input">
+          <i data-lucide="mail"></i>
+          <input id="email" type="email"
+            autocomplete="email" required placeholder="you@example.com">
+        </div>
+      </div>
+
+      <div class="auth-field">
+        <label class="small">Password</label>
+        <div class="auth-input">
+          <i data-lucide="lock"></i>
+          <input id="password" type="password" minlength="8"
+            autocomplete="current-password" required
+            placeholder="At least 8 characters">
+        </div>
+      </div>
+
+      <button class="primary auth-submit" type="submit" id="authSubmit">
+        <span>Log in</span>
+        <i data-lucide="arrow-right"></i>
+      </button>
+
     </form>
-    <p class="muted small" style="margin-top:16px">Use your own account. Never share your password.</p>
+
+    <p class="auth-security">
+      <i data-lucide="shield-check"></i>
+      Your conversations are protected.
+    </p>
+
   </div>
 </section>
 
