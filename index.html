@@ -169,6 +169,52 @@ button:focus,button:active,button:focus-visible {outline:none!important;box-shad
   .back-to-chats {display:grid}
 }
 @media(min-width:500px) {body {background:var(--bg)}#app {max-width:850px}}
+
+/* MESSENGER APP BACKGROUND — LOGIN PAGE UNCHANGED */
+#app {
+  --bg: #10152e;
+  --panel: #192044;
+  --panel2: #252d59;
+  --text: #f3f2ff;
+  --muted: #b0b6d5;
+  --blue: #8a78ff;
+  --green: #35d6a2;
+  --border: rgba(160, 150, 255, .2);
+  background: var(--bg);
+}
+
+:root:not([data-theme="dark"]) #app {
+  --bg: #eef1ff;
+  --panel: #ffffff;
+  --panel2: #e4e9ff;
+  --text: #202344;
+  --muted: #707795;
+  --blue: #6757e8;
+  --green: #19b989;
+  --border: rgba(75, 70, 160, .15);
+}
+
+#app .page {
+  background: var(--bg);
+}
+
+#app .chat-messages {
+  background: linear-gradient(145deg, #151b3b, #202653);
+}
+
+:root:not([data-theme="dark"]) #app .chat-messages {
+  background: linear-gradient(145deg, #eef1ff, #e2e8ff);
+}
+
+#app .filter.active {
+  background: #39316f;
+  color: #ffffff;
+}
+
+:root:not([data-theme="dark"]) #app .filter.active {
+  background: #dedaff;
+  color: #5947d5;
+}
 </style>
 </head>
 <body>
